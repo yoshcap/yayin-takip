@@ -193,24 +193,27 @@
             }
         }
 
-        // TEK TIKLA ARKA PLANDA BULUTU SENKRONİZE EDEN MOTOR
-        async function syncToCloud() {
-            const indicator = document.getElementById('apiStatusIndicator');
-            indicator.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-indigo-400"></i> Buluta İşleniyor...`;
-            try {
-                const response = await fetch(BULUT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(streamers)
-                });
-                if (response.ok) {
-                    indicator.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Buluta Kaydedildi!`;
-                } else {
-                    indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Kayıt Hatası`;
-                }
-            } catch (err) {
-                indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Sunucu Hatası`;
-            }
+// TEK TIKLA ARKA PLANDA BULUTU SENKRONİZE EDEN MOTOR (GÜÇLENDİRİLMİŞ AYAR)
+async function syncToCloud() {
+    const indicator = document.getElementById('apiStatusIndicator');
+    indicator.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-indigo-400"></i> Buluta İşleniyor...`;
+    try {
+        const response = await fetch(BULUT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // Tarayıcı engellerini ve sunucu reddini çözen sihirli başlık
+            },
+            body: JSON.stringify(streamers)
+        });
+        if (response.ok) {
+            indicator.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Buluta Kaydedildi!`;
+        } else {
+            indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Kayıt Hatası (${response.status})`;
         }
+    } catch (err) {
+        indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Sunucu Hatası`;
+    }
+}
 
         function renderTable(dataToRender = streamers) {
             const tableBody = document.getElementById('tableBody');
